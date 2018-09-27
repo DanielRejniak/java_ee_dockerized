@@ -1,0 +1,23 @@
+plugins {
+  id "com.palantir.docker" version "0.20.1"
+  id "com.palantir.docker-run" version "0.20.1"
+}
+
+final String image_name = "hub.ibm.com/danielrejniak/my-app:latest"
+
+docker {
+    name image_name
+    dockerfile file('Dockerfile')
+    labels(['demo-labels': 'foobar'])
+    files(tasks.getByPath(':ear'))
+}
+
+dockerRun {
+    name 'app'
+    image image_name
+    ports '80:9080'
+    daemonize true
+    clean true
+}
+
+tasks.dockerRun.dependsOn(tasks.docker)
